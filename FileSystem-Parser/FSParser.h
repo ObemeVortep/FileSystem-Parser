@@ -79,7 +79,7 @@ namespace std {
 */
 class FSParser {
 public:
-	FSParser(int maxTasks) : depth(-1), maximumAsyncTasks(maxTasks),  limitSemaphore(maxTasks), asyncTasks(maxTasks) {};
+	FSParser(int maxTasks);
 
 	// add format in fileFormats
 	void ConfigureSearch(std::initializer_list<std::wstring> formats, int initDepth, std::wstring outPath);

@@ -2,9 +2,9 @@
 
 int main() {
     // initialize number - count of threads to work
-    FSParser fsParser(8);
+    FSParser fsParser(std::thread::hardware_concurrency());
 
-    // 1st argument - formats, 2nd argument - depth of search (0 if infinity), 3th - out directory (create auto)
+    // 1st argument - formats, 2nd argument - depth of search (0 if infinity), 3th - output directory (auto create)
     fsParser.ConfigureSearch({ L".pdf" }, 0, L"C:\\Founded Files");
 
     auto startTime = std::chrono::high_resolution_clock::now();
