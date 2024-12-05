@@ -1,0 +1,48 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Исходные файлы">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Файлы заголовков">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Файлы ресурсов">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Исходные файлы\MAIN">
+      <UniqueIdentifier>{9bea1005-f081-48e4-9cd3-01e1452fe3b4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Файлы заголовков\MAIN">
+      <UniqueIdentifier>{a5469724-aba3-4bf0-a4b2-5f0464c41fe9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\FS_PARSER">
+      <UniqueIdentifier>{13d502cb-a2bd-4507-afb0-e818957b5901}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Файлы заголовков\FS_PARSER">
+      <UniqueIdentifier>{dfed64e5-ba37-45cb-bfdd-d28b6734f661}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="main.h">
+      <Filter>Файлы заголовков\MAIN</Filter>
+    </ClInclude>
+    <ClInclude Include="FSParser.h">
+      <Filter>Файлы заголовков\FS_PARSER</Filter>
+    </ClInclude>
+    <ClInclude Include="fs_help.hpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>Исходные файлы\MAIN</Filter>
+    </ClCompile>
+    <ClCompile Include="FSParser.cpp">
+      <Filter>Исходные файлы\FS_PARSER</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
