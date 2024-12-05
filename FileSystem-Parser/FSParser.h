@@ -81,9 +81,6 @@ class FSParser {
 public:
 	FSParser(int maxTasks) : depth(-1), maximumAsyncTasks(maxTasks),  limitSemaphore(maxTasks), asyncTasks(maxTasks) {};
 
-	// call only 1 time
-	int Initialize();
-
 	// add format in fileFormats
 	void ConfigureSearch(std::initializer_list<std::wstring> formats, int initDepth, std::wstring outPath);
 
@@ -126,7 +123,7 @@ private:
 	int depth;
 
 	// Files, that were found
-	std::unordered_set<FileStructure> savedFiles;
+	std::vector<FileStructure> savedFiles;
 
 	// Async fields we need
 	std::counting_semaphore<1024> limitSemaphore; 

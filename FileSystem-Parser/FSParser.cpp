@@ -15,21 +15,11 @@ void FSParser::WaitForThreads() {
 	}
 }
 
-int FSParser::Initialize() {
-	if (maximumAsyncTasks <= 0) {
-		return -1;
-	}
-
-	freeTasksId.resize(maximumAsyncTasks);
+FSParser::FSParser(int maxTasks) : depth(-1), maximumAsyncTasks(maxTasks), limitSemaphore(maxTasks), asyncTasks(maxTasks), freeTasksId(maxTasks) {
 	std::iota(freeTasksId.begin(), freeTasksId.end(), 0);
+	FindDrives();
+};
 
-	// find drives
-	if (!FindDrives()) {
-		return -2;
-	}
-
-	return 0;
-}
 
 void FSParser::ConfigureSearch(std::initializer_list<std::wstring> formats, int initDepth, std::wstring tOutPath) {
 	fileFormats = formats;
@@ -47,6 +37,9 @@ int FSParser::StartSearch() {
 
 	// check if depth inited
 	if (depth < 0) return -3;
+
+	// check if maximumAsyncTasks valid
+	if (maximumAsyncTasks <= 0) return -4;
 
 	// when all checked - start search
 	for (int d = 0; d < drives.size(); d++) {
@@ -139,7 +132,7 @@ void FSParser::ProcessAllFiles() {
 	WaitForThreads();
 	
 	// Clear unordered set
-	std::unordered_set<FileStructure>().swap(savedFiles);
+	std::vector<FileStructure>().swap(savedFiles);
 }
 
 void FSParser::ProcessFile(const std::wstring& path, const std::wstring& fileName) {
@@ -154,7 +147,7 @@ void FSParser::ProcessFile(const std::wstring& path, const std::wstring& fileNam
 			if (fileStructure.ReadDataFile()) {
 
 				// save file
-				savedFiles.insert(std::move(fileStructure));
+				savedFiles.push_back(std::move(fileStructure));
 			}
 		}
 	}
