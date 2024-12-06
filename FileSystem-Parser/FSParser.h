@@ -5,74 +5,20 @@
 *	Finding files using Win API and STL
 */
 
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+
 #include <vector>
 #include <string>
 #include <unordered_set>
+#include <unordered_map>
 #include <future>
 #include <semaphore>
 #include <deque>
 #include <mutex>
 #include <fstream>
 
-/*
-*   a struct, that include needed file information
-*/
-class FileStructure {
-public:
-	FileStructure(const std::wstring& filePath, const std::wstring& fileName) : path(filePath), name(fileName) {}
-	bool ReadDataFile() {
-		// full path to the file
-		std::wstring fullPath = path + L"\\" + name;
-
-		// open file to read binary
-		std::ifstream file(fullPath, std::ios::binary | std::ios::ate);
-		if (file) {
-
-			// get fileSize
-			std::streamsize fileSize = file.tellg();
-			file.seekg(0, std::ios::beg);
-
-			// resize vector and read data
-			binaryData.resize(static_cast<size_t>(fileSize));
-			file.read(binaryData.data(), fileSize);
-			return true;
-		}
-		else {
-			
-			// error
-			return false;
-		}
-	}
-
-	bool operator==(const FileStructure& other) const {
-		return name == other.name && path == other.path;
-	}
-
-	bool operator<(const FileStructure& other) const {
-		if (name != other.name) {
-			return name < other.name;
-		}
-		return path < other.path;
-	}
-
-	std::wstring name;
-	std::wstring path;
-	std::vector<char> binaryData;
-};
-
-/*
-*	for unordered_set we need to create our hash function for FileStructure
-*/
-namespace std {
-	template<>
-	struct hash<FileStructure> {
-		size_t operator()(const FileStructure& fs) const {
-			size_t h1 = std::hash<std::wstring>()(fs.name);
-			size_t h2 = std::hash<std::wstring>()(fs.path);
-			return h1 ^ (h2 << 1); // Комбинируем хэши
-		}
-	};
-}
+#include "FSParsers_typedefs.h"
 
 /*
 *	a class that searches for files with the specified formats and saves them (if necessary) on the computer
@@ -85,24 +31,48 @@ public:
 	void ConfigureSearch(std::initializer_list<std::wstring> formats, int initDepth, std::wstring outPath);
 
 	// search files, depth determines the number of folders inside which we will search for files
-	int StartSearch();
+	int SaveAllFilesByFormat();
+
+	// cache all files
+	int CacheFS();
+
+	// function, that check if file format correct by fileFormats
+	bool CheckFileFormat(const std::wstring& fileName);
+
+	// function, that check format and if valid - save it in savedFiles
+	void SaveFileInStructure(const std::wstring& path, const std::wstring& fileName);
+	
+	// function that cache fileName and path in cachedFiles
+	void CacheFileInStructure(const std::wstring& path, const std::wstring& fileName);
 
 private:
-	// function, that enumerate and check files in current folder
-	void ListDirectories(const std::wstring& path, const int currentDepth);
-	void AsyncListDirectories(std::wstring path, const int currentDepth);
 
-	// function, that check format and if need process file
-	void ProcessFile(const std::wstring& path, const std::wstring& fileName);
+	// async variant of SaveFileInStructure
+	void AsyncSaveFileInStructure(std::wstring path, std::wstring fileName);
+	
+	// unordered map, first -> format, second -> FilePathInfo
+	CachedFiles cachedFiles;
+	std::mutex cachedFilesMutex;
+	
+	// function, that enumerate and check files in current folder
+	template<typename Callable>
+	void ListDirectories(const std::wstring& path, const int currentDepth, Callable processFunction);
+
+	// async ListDirectories version
+	template<typename Callable>
+	void AsyncListDirectories(std::wstring path, const int currentDepth, Callable processFunction);
 
 	// prepare all before process
-	bool PrepareBeforeProcess();
+	bool PrepareBeforeSaveOnFS();
+
+	// save cached formats
+	void SaveCachedFilesInStructure();
 
 	// process all files
-	void ProcessAllFiles();
+	void SaveAllFilesOnFS();
 
 	// save current file
-	void SaveFile(const FileStructure& fileStructure);
+	void SaveFileOnFS(const FileStructure& fileStructure);
 
 	// function, that find logical drives
 	bool FindDrives();
@@ -124,6 +94,10 @@ private:
 
 	// Files, that were found
 	std::vector<FileStructure> savedFiles;
+	std::mutex savedFilesMutex;
+
+	int GetFreeThreadId();
+	void FreeThread(int threadId);
 
 	// Async fields we need
 	std::counting_semaphore<1024> limitSemaphore; 
@@ -135,5 +109,72 @@ private:
 
 };
 
+template<typename Callable>
+void FSParser::AsyncListDirectories(std::wstring newPath, const int currentDepth, Callable processFunction) {
+	// if free thread exists - async call
+	limitSemaphore.acquire();
+
+	// get free thread ID
+	int newThreadId = GetFreeThreadId();
+
+	asyncTasks[newThreadId] = std::async(std::launch::async, [this, pathNeed = std::move(newPath), currentDepth, newThreadId, processFunction]() {
+		ListDirectories(pathNeed, currentDepth, processFunction);
+
+		FreeThread(newThreadId);
+
+		limitSemaphore.release();
+		});
+}
+
+template<typename Callable>
+void FSParser::ListDirectories(const std::wstring& path, const int currentDepth, Callable processFunction) {
+	// if currentDepth > depth (and depth != 0) end searching
+	if (depth != 0 && currentDepth > depth) return;
+
+	WIN32_FIND_DATA findFileData;
+	HANDLE hFind;
+
+	// forming a mask search
+	std::wstring searchPath = path + L"\\*";
+
+	// find first file/fodler
+	hFind = FindFirstFileW(searchPath.c_str(), &findFileData);
+	if (hFind == INVALID_HANDLE_VALUE) {
+
+		// no more files in folder or access denied (if no admin privilegies)
+		return;
+	}
+
+	do {
+		// skip "." (current dir) and ".."(parrent dir)
+		if (wcscmp(findFileData.cFileName, L".") == 0 || wcscmp(findFileData.cFileName, L"..") == 0) {
+			continue;
+		}
+
+		// check, if element is folder
+		if (findFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
+
+			// if element is folder -> search deeper (don`t forget to increment currentDepth
+			std::wstring newPath(searchPath.begin(), searchPath.end() - 1);
+			newPath.append(findFileData.cFileName);
+
+			// if we have free thread
+			if (!freeTasksId.empty()) {
+				AsyncListDirectories(std::move(newPath), currentDepth + 1, processFunction);
+			}
+			// if free thread no exists
+			else {
+				ListDirectories(newPath, currentDepth + 1, processFunction);
+			}
+		}
+		else {
+			// process founded file
+			std::wstring fileName(findFileData.cFileName);
+			processFunction(path, fileName);
+		}
+	} while (FindNextFileW(hFind, &findFileData) != 0);
+
+	FindClose(hFind);
+}
 
 #endif // _FS_PARSER_H

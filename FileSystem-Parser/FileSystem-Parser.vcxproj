@@ -129,13 +129,18 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="FSParser.cpp" />
+    <ClCompile Include="FSParser_saving.cpp" />
+    <ClCompile Include="FSParser_async.cpp" />
+    <ClCompile Include="FSParser_caching.cpp" />
+    <ClCompile Include="FSParser_initializing.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FSParser.h" />
+    <ClInclude Include="FSParsers_typedefs.h" />
     <ClInclude Include="fs_help.hpp" />
     <ClInclude Include="main.h" />
+    <ClInclude Include="main_defines.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -33,15 +33,30 @@
     <ClInclude Include="FSParser.h">
       <Filter>Файлы заголовков\FS_PARSER</Filter>
     </ClInclude>
+    <ClInclude Include="main_defines.h">
+      <Filter>Файлы заголовков\MAIN</Filter>
+    </ClInclude>
+    <ClInclude Include="FSParsers_typedefs.h">
+      <Filter>Файлы заголовков\FS_PARSER</Filter>
+    </ClInclude>
     <ClInclude Include="fs_help.hpp">
-      <Filter>Файлы заголовков</Filter>
+      <Filter>Файлы заголовков\FS_PARSER</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>Исходные файлы\MAIN</Filter>
     </ClCompile>
-    <ClCompile Include="FSParser.cpp">
+    <ClCompile Include="FSParser_saving.cpp">
+      <Filter>Исходные файлы\FS_PARSER</Filter>
+    </ClCompile>
+    <ClCompile Include="FSParser_initializing.cpp">
+      <Filter>Исходные файлы\FS_PARSER</Filter>
+    </ClCompile>
+    <ClCompile Include="FSParser_caching.cpp">
+      <Filter>Исходные файлы\FS_PARSER</Filter>
+    </ClCompile>
+    <ClCompile Include="FSParser_async.cpp">
       <Filter>Исходные файлы\FS_PARSER</Filter>
     </ClCompile>
   </ItemGroup>
