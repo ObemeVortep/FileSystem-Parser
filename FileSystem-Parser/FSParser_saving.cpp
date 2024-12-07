@@ -86,8 +86,9 @@ void FSParser::SaveCachedFilesInStructure() {
 	}
 }
 
-int FSParser::SaveAllFilesByFormat(std::initializer_list<std::wstring> formats, int initDepth, std::wstring tOutPath) {
-	
+int FSParser::SaveAllFilesByFormat(std::initializer_list<std::wstring> formats, int initDepth, std::wstring tOutPath, DWORD flags) {
+	if (flags & FSPARSER_TIME_EXECUTION) StartTimeCount();
+
 	// configure search (init)
 	ConfigureSearch(std::move(formats), initDepth, std::move(tOutPath));
 
@@ -129,6 +130,8 @@ int FSParser::SaveAllFilesByFormat(std::initializer_list<std::wstring> formats, 
 
 	// clear search configuration
 	ClearSearchConfiguration();
+
+	if (flags & FSPARSER_TIME_EXECUTION) StopTimeCount(L"Save all files by format time execution: ");
 
 	return 0;
 }

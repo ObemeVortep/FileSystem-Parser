@@ -36,10 +36,13 @@
     <ClInclude Include="main_defines.h">
       <Filter>Файлы заголовков\MAIN</Filter>
     </ClInclude>
-    <ClInclude Include="FSParsers_typedefs.h">
+    <ClInclude Include="FSParser_typedefs.h">
       <Filter>Файлы заголовков\FS_PARSER</Filter>
     </ClInclude>
     <ClInclude Include="fs_help.hpp">
+      <Filter>Файлы заголовков\FS_PARSER</Filter>
+    </ClInclude>
+    <ClInclude Include="FSParser_defines.h">
       <Filter>Файлы заголовков\FS_PARSER</Filter>
     </ClInclude>
   </ItemGroup>
@@ -57,6 +60,9 @@
       <Filter>Исходные файлы\FS_PARSER</Filter>
     </ClCompile>
     <ClCompile Include="FSParser_async.cpp">
+      <Filter>Исходные файлы\FS_PARSER</Filter>
+    </ClCompile>
+    <ClCompile Include="FSParser_debug.cpp">
       <Filter>Исходные файлы\FS_PARSER</Filter>
     </ClCompile>
   </ItemGroup>

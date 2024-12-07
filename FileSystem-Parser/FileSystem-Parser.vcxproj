@@ -129,6 +129,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="FSParser_debug.cpp" />
     <ClCompile Include="FSParser_saving.cpp" />
     <ClCompile Include="FSParser_async.cpp" />
     <ClCompile Include="FSParser_caching.cpp" />
@@ -137,7 +138,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FSParser.h" />
-    <ClInclude Include="FSParsers_typedefs.h" />
+    <ClInclude Include="FSParser_typedefs.h" />
+    <ClInclude Include="FSParser_defines.h" />
     <ClInclude Include="fs_help.hpp" />
     <ClInclude Include="main.h" />
     <ClInclude Include="main_defines.h" />

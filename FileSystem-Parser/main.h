@@ -5,6 +5,5 @@
 #include "main_defines.h"
 
 #include <iostream>
-#include <chrono>
 
 #endif // _MAIN_H

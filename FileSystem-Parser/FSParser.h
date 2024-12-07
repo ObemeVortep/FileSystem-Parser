@@ -18,7 +18,8 @@
 #include <mutex>
 #include <fstream>
 
-#include "FSParsers_typedefs.h"
+#include "FSParser_defines.h"
+#include "FSParser_typedefs.h"
 
 /*
 *	a class that searches for files with the specified formats and saves them (if necessary) on the computer
@@ -27,14 +28,14 @@ class FSParser {
 public:
 	FSParser(int maxTasks);
 
+	// cache all files
+	int CacheFS(DWORD flags);
+
 	// search files, depth determines the number of folders inside which we will search for files
-	int SaveAllFilesByFormat(std::initializer_list<std::wstring> formats, int initDepth, std::wstring tOutPath);
+	int SaveAllFilesByFormat(std::initializer_list<std::wstring> formats, int initDepth, std::wstring tOutPath, DWORD flags);
 
 	// function that find file by name and return vector of pathes
 	std::vector<std::wstring> FindFileByName(std::wstring fileName);
-
-	// cache all files
-	int CacheFS();
 
 	// function, that check if file format correct by fileFormats or with format
 	bool CheckFileFormat(const std::wstring& fileName);
@@ -132,6 +133,14 @@ private:
 	inline bool IsDepthInited() { return depth >= 0; }
 	inline bool IsAsyncTasksInited() { return maximumAsyncTasks > 0; }
 
+	/*
+	*	debug fields/functions
+	*/
+	void StartTimeCount();
+	void StopTimeCount(std::wstring outString);
+
+	std::chrono::steady_clock::time_point startPoint;
+	std::chrono::steady_clock::time_point endPoint;
 };
 
 template<typename Callable>

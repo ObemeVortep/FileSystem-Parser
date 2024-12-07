@@ -5,7 +5,7 @@ std::vector<std::wstring> FSParser::FindFileByName(std::wstring fileName) {
 
 	// if FS not cached - caching, than try to find our file
 	if (!IsFSCached()) {
-		CacheFS();
+		CacheFS(FSPARSER_TIME_EXECUTION);
 	}
 
 	// get file format
@@ -66,7 +66,9 @@ void FSParser::SortCachedStructure() {
 	}
 }
 
-int FSParser::CacheFS() {
+int FSParser::CacheFS(DWORD flags) {
+
+	if (flags & FSPARSER_TIME_EXECUTION) StartTimeCount();
 
 	// check if drives inited
 	if (!IsDrivesInited()) return -2;
@@ -96,6 +98,8 @@ int FSParser::CacheFS() {
 
 	// return depth
 	depth = savedDepth;
+	
+	if (flags & FSPARSER_TIME_EXECUTION) StopTimeCount(L"CacheFS time execution: ");
 
 	return 0;
 }
