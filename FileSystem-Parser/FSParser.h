@@ -49,6 +49,11 @@ public:
 	void CacheFileInStructure(const std::wstring& path, const std::wstring& fileName);
 
 private:
+
+	// const undefined format string
+	const std::wstring UNDEFINED_FORMAT;
+
+
 	// Configure search
 	void ConfigureSearch(std::initializer_list<std::wstring> formats, int initDepth, std::wstring outPath);
 

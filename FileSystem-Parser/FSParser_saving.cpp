@@ -25,9 +25,10 @@ std::wstring FSParser::GetFileFormat(const std::wstring& fileName) {
 
 		return fileName.substr(dotPos);
 	}
+	else {
 
-	// incorrect format
-	return std::wstring();
+		return std::wstring(UNDEFINED_FORMAT);
+	}
 }
 
 void FSParser::SaveFileInStructure(const std::wstring& path, const std::wstring& fileName) {

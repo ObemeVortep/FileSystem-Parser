@@ -47,7 +47,7 @@ void FSParser::CacheFileInStructure(const std::wstring& path, const std::wstring
 		fileFormat = std::move(fileName.substr(dotPos));
 	}
 	else {
-		fileFormat = L"undefined";
+		fileFormat = UNDEFINED_FORMAT;
 	}
 	FilePathInfo filePathInfo(path, fileName);
 	{

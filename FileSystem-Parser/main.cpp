@@ -26,7 +26,7 @@ int main() {
     endTime = std::chrono::high_resolution_clock::now();
     std::cout << "File finding time: " << std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime) << std::endl;
 
-
+    return 0;
 
     startTime = std::chrono::high_resolution_clock::now();
  

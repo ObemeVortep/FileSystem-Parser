@@ -1,7 +1,7 @@
 #include "FSParser.h"
 #include <numeric>
 
-FSParser::FSParser(int maxTasks) : depth(-1), maximumAsyncTasks(maxTasks), limitSemaphore(maxTasks), asyncTasks(maxTasks), freeTasksId(maxTasks) {
+FSParser::FSParser(int maxTasks) : depth(-1), maximumAsyncTasks(maxTasks), limitSemaphore(maxTasks), asyncTasks(maxTasks), freeTasksId(maxTasks), UNDEFINED_FORMAT(L"undefined") {
 	std::iota(freeTasksId.begin(), freeTasksId.end(), 0);
 	FindDrives();
 };
