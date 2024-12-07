@@ -8,7 +8,6 @@ void FSParser::WaitForThreads() {
 	}
 }
 
-
 int FSParser::GetFreeThreadId() {
 	std::lock_guard<std::mutex> lock(freeTasksIdMutex);
 	int threadId = freeTasksId.front();

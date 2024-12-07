@@ -19,6 +19,17 @@ bool FSParser::CheckFileFormat(const std::wstring& fileName) {
 	return false;
 }
 
+std::wstring FSParser::GetFileFormat(const std::wstring& fileName) {
+	auto dotPos = fileName.find_last_of(L'.');
+	if (dotPos != std::wstring::npos) {
+
+		return fileName.substr(dotPos);
+	}
+
+	// incorrect format
+	return std::wstring();
+}
+
 void FSParser::SaveFileInStructure(const std::wstring& path, const std::wstring& fileName) {
 
 	// create fileStructure and try to read data
@@ -74,22 +85,25 @@ void FSParser::SaveCachedFilesInStructure() {
 	}
 }
 
-int FSParser::SaveAllFilesByFormat() {
+int FSParser::SaveAllFilesByFormat(std::initializer_list<std::wstring> formats, int initDepth, std::wstring tOutPath) {
+	
+	// configure search (init)
+	ConfigureSearch(std::move(formats), initDepth, std::move(tOutPath));
 
 	// check if fileFormats inited
-	if (fileFormats.empty()) return -1;
+	if (!IsFormatsInited()) return -1;
 	
 	// check if drives inited
-	if (drives.empty()) return -2;
+	if (!IsDrivesInited()) return -2;
 
 	// check if depth inited
-	if (depth < 0) return -3;
+	if (!IsDepthInited()) return -3;
 
 	// check if maximumAsyncTasks valid
-	if (maximumAsyncTasks <= 0) return -4;
+	if (!IsAsyncTasksInited()) return -4;
 
 	// if FS cached - use cachedFiles
-	if (!cachedFiles.empty()) {
+	if (IsFSCached()) {
 		SaveCachedFilesInStructure();
 	}
 	// if not - start parse
@@ -111,6 +125,9 @@ int FSParser::SaveAllFilesByFormat() {
 
 	// process all files
 	SaveAllFilesOnFS();
+
+	// clear search configuration
+	ClearSearchConfiguration();
 
 	return 0;
 }
@@ -157,7 +174,6 @@ bool FSParser::PrepareBeforeSaveOnFS() {
 }
 
 void FSParser::SaveAllFilesOnFS() {
-	std::cout << "Count of saved files: " << savedFiles.size() << std::endl;
 	
 	if (!PrepareBeforeSaveOnFS()) {
 		return;
@@ -189,7 +205,9 @@ void FSParser::SaveAllFilesOnFS() {
 	}
 
 	WaitForThreads();
-	
+
+	std::cout << "Count of saved files: " << savedFiles.size() << std::endl;
+
 	// Clear unordered set
 	std::vector<FileStructure>().swap(savedFiles);
 }

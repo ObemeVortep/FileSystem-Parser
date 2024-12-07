@@ -38,3 +38,7 @@ void FSParser::ConfigureSearch(std::initializer_list<std::wstring> formats, int 
 	depth = initDepth;
 	outPath = std::move(tOutPath);
 }
+
+void FSParser::ClearSearchConfiguration() {
+	ConfigureSearch({}, -1, std::move(std::wstring()));
+}

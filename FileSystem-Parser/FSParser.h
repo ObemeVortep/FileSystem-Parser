@@ -27,17 +27,20 @@ class FSParser {
 public:
 	FSParser(int maxTasks);
 
-	// add format in fileFormats
-	void ConfigureSearch(std::initializer_list<std::wstring> formats, int initDepth, std::wstring outPath);
-
 	// search files, depth determines the number of folders inside which we will search for files
-	int SaveAllFilesByFormat();
+	int SaveAllFilesByFormat(std::initializer_list<std::wstring> formats, int initDepth, std::wstring tOutPath);
+
+	// function that find file by name and return vector of pathes
+	std::vector<std::wstring> FindFileByName(std::wstring fileName);
 
 	// cache all files
 	int CacheFS();
 
-	// function, that check if file format correct by fileFormats
+	// function, that check if file format correct by fileFormats or with format
 	bool CheckFileFormat(const std::wstring& fileName);
+
+	// function that return file format (if exists)
+	std::wstring GetFileFormat(const std::wstring& fileName);
 
 	// function, that check format and if valid - save it in savedFiles
 	void SaveFileInStructure(const std::wstring& path, const std::wstring& fileName);
@@ -46,6 +49,11 @@ public:
 	void CacheFileInStructure(const std::wstring& path, const std::wstring& fileName);
 
 private:
+	// Configure search
+	void ConfigureSearch(std::initializer_list<std::wstring> formats, int initDepth, std::wstring outPath);
+
+	// Clear after search
+	void ClearSearchConfiguration();
 
 	// async variant of SaveFileInStructure
 	void AsyncSaveFileInStructure(std::wstring path, std::wstring fileName);
@@ -67,6 +75,9 @@ private:
 
 	// save cached formats
 	void SaveCachedFilesInStructure();
+
+	// sort cached files
+	void SortCachedStructure();
 
 	// process all files
 	void SaveAllFilesOnFS();
@@ -106,6 +117,15 @@ private:
 
 	std::mutex freeTasksIdMutex;
 	std::deque<int> freeTasksId;
+
+	/*
+	*	check functions
+	*/
+	inline bool IsDrivesInited() { return !drives.empty(); }
+	inline bool IsFSCached() { return !cachedFiles.empty(); }
+	inline bool IsFormatsInited() { return !fileFormats.empty(); }
+	inline bool IsDepthInited() { return depth >= 0; }
+	inline bool IsAsyncTasksInited() { return maximumAsyncTasks > 0; }
 
 };
 
@@ -160,6 +180,7 @@ void FSParser::ListDirectories(const std::wstring& path, const int currentDepth,
 
 			// if we have free thread
 			if (!freeTasksId.empty()) {
+
 				AsyncListDirectories(std::move(newPath), currentDepth + 1, processFunction);
 			}
 			// if free thread no exists
