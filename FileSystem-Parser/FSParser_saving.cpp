@@ -1,36 +1,6 @@
 #include "FSParser.h"
 #include <iostream>
 
-#include "fs_help.hpp"
-
-bool FSParser::CheckFileFormat(const std::wstring& fileName) {
-	auto dotPos = fileName.find_last_of(L'.');
-	if (dotPos != std::wstring::npos) {
-
-		// check file format
-		if (fileFormats.count(fileName.substr(dotPos))) {
-			
-			// format correct
-			return true;
-		}
-	}
-
-	// incorrect format
-	return false;
-}
-
-std::wstring FSParser::GetFileFormat(const std::wstring& fileName) {
-	auto dotPos = fileName.find_last_of(L'.');
-	if (dotPos != std::wstring::npos) {
-
-		return fileName.substr(dotPos);
-	}
-	else {
-
-		return std::wstring(UNDEFINED_FORMAT);
-	}
-}
-
 void FSParser::SaveFileInStructure(const std::wstring& path, const std::wstring& fileName) {
 
 	// create fileStructure and try to read data
@@ -115,8 +85,8 @@ int FSParser::SaveAllFilesByFormat(std::initializer_list<std::wstring> formats, 
 			std::wstring path = std::wstring(1, drives[d]) + L":";
 			AsyncListDirectories(std::move(path), 0, [this](const std::wstring& path, const std::wstring& fileName) {
 				// save files if format correct
-				if (this->CheckFileFormat(fileName)) {
-					this->SaveFileInStructure(path, fileName);
+				if (CheckFileFormat(fileName)) {
+					SaveFileInStructure(path, fileName);
 				}
 				});
 		}
@@ -189,21 +159,13 @@ void FSParser::SaveAllFilesOnFS() {
 		// async saveFile
 		limitSemaphore.acquire();
 
-		int threadId;
-		{
-			std::lock_guard<std::mutex> lock(freeTasksIdMutex);
-			threadId = freeTasksId.front();
-			freeTasksId.pop_front();
-		}
-
+		int threadId = GetFreeThreadId();
 		asyncTasks[threadId] = std::async(std::launch::async, [this, file, threadId]() {
 			// call async SaveFileOnFS
 			SaveFileOnFS(file);
 			
-			{
-				std::lock_guard<std::mutex> lock(freeTasksIdMutex);
-				freeTasksId.push_back(threadId);
-			}
+			FreeThread(threadId);
+			
 			limitSemaphore.release();
 			});
 	}

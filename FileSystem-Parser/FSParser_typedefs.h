@@ -91,4 +91,5 @@ struct CaseInsensitiveHasher {
 
 typedef std::unordered_map<std::wstring, std::vector<FilePathInfo>, CaseInsensitiveHasher, CaseInsensitiveEqual> CachedFiles;
 
+
 #endif // _FS_PARSER_TYPEDEFS_H

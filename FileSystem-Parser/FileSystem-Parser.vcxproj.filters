@@ -39,9 +39,6 @@
     <ClInclude Include="FSParser_typedefs.h">
       <Filter>Файлы заголовков\FS_PARSER</Filter>
     </ClInclude>
-    <ClInclude Include="fs_help.hpp">
-      <Filter>Файлы заголовков\FS_PARSER</Filter>
-    </ClInclude>
     <ClInclude Include="FSParser_defines.h">
       <Filter>Файлы заголовков\FS_PARSER</Filter>
     </ClInclude>

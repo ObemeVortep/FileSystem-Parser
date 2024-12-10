@@ -140,7 +140,6 @@
     <ClInclude Include="FSParser.h" />
     <ClInclude Include="FSParser_typedefs.h" />
     <ClInclude Include="FSParser_defines.h" />
-    <ClInclude Include="fs_help.hpp" />
     <ClInclude Include="main.h" />
     <ClInclude Include="main_defines.h" />
   </ItemGroup>
