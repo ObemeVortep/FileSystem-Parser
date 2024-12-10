@@ -1,10 +1,6 @@
 ﻿#ifndef _FS_PARSER_H
 #define _FS_PARSER_H
 
-/*
-*	Finding files using Win API and STL
-*/
-
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 
@@ -23,7 +19,7 @@
 #include "FSParser_typedefs.h"
 
 /*
-*	a class that searches for files with the specified formats and saves them (if necessary) on the computer
+*	FSParser - fast parsing of the entire file system and search for the necessary files
 */
 class FSParser {
 	
