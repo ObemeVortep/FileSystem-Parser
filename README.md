@@ -1,7 +1,6 @@
 # FSParser – Multithreaded File System Parser (C++ with STL)
 
 This project was developed in December 2024, shortly after I completed my first large-scale low-level C++ project(10k+ LOC, developed solo from July to November).  
-Unfortunately, that project is private and cannot be published publicly.
 
 ### 📚 Motivation
 
