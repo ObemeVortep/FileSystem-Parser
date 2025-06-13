@@ -30,7 +30,7 @@ FSParser is a multithreaded file system parser built to test and apply various S
 
 ### ⚡ Performance
 
-On my machine (SSD 256GB + HDD 2TB), the parser caches both disks fully in 15–20 seconds. After caching, file search is nearly instant (a few milliseconds per query).
+On my machine (SSD 256GB + HDD 2TB), the parser caches both disks fully in 5 seconds. After caching, file search is nearly instant (a few milliseconds per query).
 
 ---
 
